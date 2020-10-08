@@ -169,6 +169,7 @@ struct sl_context {
   struct wl_array selection_data;
   int selection_data_offer_receive_fd;
   int selection_data_ack_pending;
+  int native_gpu;
   union {
     const char* name;
     xcb_intern_atom_cookie_t cookie;
@@ -252,6 +253,8 @@ struct sl_host_surface {
   struct sl_output_buffer* current_buffer;
   struct wl_list released_buffers;
   struct wl_list busy_buffers;
+  struct sl_crosvm_data* source;
+  struct sl_crosvm_data* target;
 };
 
 struct sl_host_region {
@@ -268,6 +271,9 @@ struct sl_host_buffer {
   struct sl_mmap* shm_mmap;
   uint32_t shm_format;
   struct sl_sync_point* sync_point;
+  struct sl_crosvm_data* target_buffer;
+  struct sl_crosvm_data* source_buffer;
+  struct sl_host_surface* surface;
 };
 
 struct sl_data_source_send_request {

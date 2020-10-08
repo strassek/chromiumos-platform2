@@ -13,6 +13,8 @@
 #include <wayland-client.h>
 #include <wayland-util.h>
 
+#include "sommelier-vfio.h"
+
 #include "keyboard-extension-unstable-v1-client-protocol.h"
 
 struct sl_host_keyboard {
@@ -53,8 +55,10 @@ static void sl_host_pointer_set_cursor(struct wl_client* client,
   if (surface_resource) {
     host_surface = wl_resource_get_user_data(surface_resource);
     host_surface->has_role = 1;
-    if (host_surface->contents_width && host_surface->contents_height)
+    if (host_surface->contents_width && host_surface->contents_height) {
+      sl_update_host_surface(host_surface);
       wl_surface_commit(host_surface->proxy);
+    }
   }
 
   wl_pointer_set_cursor(host->proxy, serial,

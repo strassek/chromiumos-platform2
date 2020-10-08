@@ -13,6 +13,7 @@
 #include <xf86drm.h>
 
 #include "virtgpu_drm.h"
+#include "sommelier-vfio.h"
 
 #include "drm-server-protocol.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
@@ -102,6 +103,13 @@ static void sl_drm_create_prime_buffer(struct wl_client* client,
                                        int32_t offset2,
                                        int32_t stride2) {
   struct sl_host_drm* host = wl_resource_get_user_data(resource);
+  if (host->ctx->native_gpu) {
+    sl_vifio_create_prime_buffer(client, host->ctx, host->ctx->virtwl_fd, gbm_device_get_fd(host->ctx->gbm), id,
+                                name, width, height, format, offset0,
+                                stride0, offset1, stride1, offset2, stride2);
+    return;
+  }
+
   struct zwp_linux_buffer_params_v1* buffer_params;
 
   assert(name >= 0);
