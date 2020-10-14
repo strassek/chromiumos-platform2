@@ -1087,6 +1087,8 @@ static void sl_registry_handler(void* data,
                                 uint32_t version) {
   struct sl_context* ctx = (struct sl_context*)data;
 
+  printf("%s: %s v%u", __func__, interface, version);
+
   if (strcmp(interface, "wl_compositor") == 0) {
     struct sl_compositor* compositor = malloc(sizeof(struct sl_compositor));
     assert(compositor);
@@ -1099,6 +1101,7 @@ static void sl_registry_handler(void* data,
     assert(!ctx->compositor);
     ctx->compositor = compositor;
     compositor->host_global = sl_compositor_global_create(ctx);
+    printf(" CREATED");
   } else if (strcmp(interface, "wl_subcompositor") == 0) {
     struct sl_subcompositor* subcompositor =
         malloc(sizeof(struct sl_subcompositor));
@@ -1108,6 +1111,7 @@ static void sl_registry_handler(void* data,
     assert(!ctx->subcompositor);
     ctx->subcompositor = subcompositor;
     subcompositor->host_global = sl_subcompositor_global_create(ctx);
+    printf(" CREATED");
   } else if (strcmp(interface, "wl_shm") == 0) {
     struct sl_shm* shm = malloc(sizeof(struct sl_shm));
     assert(shm);
@@ -1117,6 +1121,7 @@ static void sl_registry_handler(void* data,
     assert(!ctx->shm);
     ctx->shm = shm;
     shm->host_global = sl_shm_global_create(ctx);
+    printf(" CREATED");
   } else if (strcmp(interface, "wl_shell") == 0) {
     struct sl_shell* shell = malloc(sizeof(struct sl_shell));
     assert(shell);
@@ -1125,6 +1130,7 @@ static void sl_registry_handler(void* data,
     assert(!ctx->shell);
     ctx->shell = shell;
     shell->host_global = sl_shell_global_create(ctx);
+    printf(" CREATED");
   } else if (strcmp(interface, "wl_output") == 0) {
     struct sl_output* output = malloc(sizeof(struct sl_output));
     assert(output);
@@ -1133,6 +1139,7 @@ static void sl_registry_handler(void* data,
     output->version = MIN(3, version);
     output->host_global = sl_output_global_create(output);
     wl_list_insert(&ctx->outputs, &output->link);
+    printf(" CREATED");
   } else if (strcmp(interface, "wl_seat") == 0) {
     struct sl_seat* seat = malloc(sizeof(struct sl_seat));
     assert(seat);
@@ -1142,6 +1149,7 @@ static void sl_registry_handler(void* data,
     seat->last_serial = 0;
     seat->host_global = sl_seat_global_create(seat);
     wl_list_insert(&ctx->seats, &seat->link);
+    printf(" CREATED");
   } else if (strcmp(interface, "zwp_relative_pointer_manager_v1") == 0) {
     struct sl_relative_pointer_manager* relative_pointer =
         malloc(sizeof(struct sl_relative_pointer_manager));
@@ -1154,6 +1162,7 @@ static void sl_registry_handler(void* data,
     ctx->relative_pointer_manager = relative_pointer;
     relative_pointer->host_global =
         sl_relative_pointer_manager_global_create(ctx);
+    printf(" CREATED");
   } else if (strcmp(interface, "zwp_pointer_constraints_v1") == 0) {
     struct sl_pointer_constraints* pointer_constraints =
         malloc(sizeof(struct sl_pointer_constraints));
@@ -1166,6 +1175,7 @@ static void sl_registry_handler(void* data,
     ctx->pointer_constraints = pointer_constraints;
     pointer_constraints->host_global =
         sl_pointer_constraints_global_create(ctx);
+    printf(" CREATED");
   } else if (strcmp(interface, "wl_data_device_manager") == 0) {
     struct sl_data_device_manager* data_device_manager =
         malloc(sizeof(struct sl_data_device_manager));
@@ -1185,6 +1195,7 @@ static void sl_registry_handler(void* data,
       data_device_manager->host_global =
           sl_data_device_manager_global_create(ctx);
     }
+    printf(" CREATED");
   } else if (strcmp(interface, "xdg_wm_base") == 0) {
     struct sl_xdg_wm_base* xdg_wm_base = malloc(sizeof(struct sl_xdg_wm_base));
     assert(xdg_wm_base);
@@ -1203,6 +1214,7 @@ static void sl_registry_handler(void* data,
     } else {
       xdg_wm_base->host_global = sl_xdg_wm_base_global_create(ctx);
     }
+    printf(" CREATED");
   } else if (strcmp(interface, "zaura_shell") == 0) {
     if (version >= MIN_AURA_SHELL_VERSION) {
       struct sl_aura_shell* aura_shell = malloc(sizeof(struct sl_aura_shell));
@@ -1217,6 +1229,7 @@ static void sl_registry_handler(void* data,
       ctx->aura_shell = aura_shell;
       aura_shell->host_gtk_shell_global = sl_gtk_shell_global_create(ctx);
     }
+    printf(" CREATED");
   } else if (strcmp(interface, "wp_viewporter") == 0) {
     struct sl_viewporter* viewporter = malloc(sizeof(struct sl_viewporter));
     assert(viewporter);
@@ -1230,6 +1243,7 @@ static void sl_registry_handler(void* data,
     viewporter->host_viewporter_global = sl_viewporter_global_create(ctx);
     // Allow non-integer scale.
     ctx->scale = MIN(MAX_SCALE, MAX(MIN_SCALE, ctx->desired_scale));
+    printf(" CREATED");
   } else if (strcmp(interface, "zwp_linux_dmabuf_v1") == 0) {
     struct sl_linux_dmabuf* linux_dmabuf =
         malloc(sizeof(struct sl_linux_dmabuf));
@@ -1242,6 +1256,7 @@ static void sl_registry_handler(void* data,
     assert(!ctx->linux_dmabuf);
     ctx->linux_dmabuf = linux_dmabuf;
     linux_dmabuf->host_drm_global = sl_drm_global_create(ctx);
+    printf(" CREATED");
   } else if (strcmp(interface, "zcr_keyboard_extension_v1") == 0) {
     struct sl_keyboard_extension* keyboard_extension =
         malloc(sizeof(struct sl_keyboard_extension));
@@ -1252,6 +1267,7 @@ static void sl_registry_handler(void* data,
         wl_registry_bind(registry, id, &zcr_keyboard_extension_v1_interface, 1);
     assert(!ctx->keyboard_extension);
     ctx->keyboard_extension = keyboard_extension;
+    printf(" CREATED");
   } else if (strcmp(interface, "zwp_text_input_manager_v1") == 0) {
     struct sl_text_input_manager* text_input_manager =
         malloc(sizeof(struct sl_text_input_manager));
@@ -1263,7 +1279,20 @@ static void sl_registry_handler(void* data,
     text_input_manager->host_global = sl_text_input_manager_global_create(ctx);
     assert(!ctx->text_input_manager);
     ctx->text_input_manager = text_input_manager;
+    printf(" CREATED");
+  } else if (strcmp(interface, "zxdg_shell_v6") == 0) {
+    struct sl_xdg_shell* xdg_shell =
+        malloc(sizeof(struct sl_xdg_shell)); //v6 v1
+    assert(xdg_shell);
+    xdg_shell->ctx = ctx;
+    xdg_shell->id = id;
+    xdg_shell->internal =
+       wl_registry_bind(registry, id, &zxdg_shell_v6_interface, 1);
+    assert(!ctx->xdg_shell);
+    ctx->xdg_shell = xdg_shell;
+    printf(" CREATED");
   }
+  printf("\n");
 }
 
 static void sl_registry_remover(void* data,
@@ -1381,6 +1410,12 @@ static void sl_registry_remover(void* data,
       free(seat);
       return;
     }
+  }
+  if (ctx->xdg_shell && ctx->xdg_shell->id == id) {
+    sl_global_destroy(ctx->xdg_shell->host_global);
+    free(ctx->xdg_shell);
+    ctx->xdg_shell = NULL;
+    return;
   }
 
   // Not reached.
@@ -3588,6 +3623,7 @@ int main(int argc, char** argv) {
       .linux_dmabuf = NULL,
       .keyboard_extension = NULL,
       .text_input_manager = NULL,
+      .xdg_shell = NULL,
       .display_event_source = NULL,
       .display_ready_event_source = NULL,
       .sigchld_event_source = NULL,

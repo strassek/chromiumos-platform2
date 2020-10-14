@@ -568,3 +568,37 @@ struct sl_global* sl_xdg_wm_base_global_create(struct sl_context* ctx) {
                           ctx->xdg_wm_base->version, ctx,
                           sl_bind_host_xdg_wm_base);
 }
+
+struct sl_host_xdg_shell {
+  struct sl_context* ctx;
+  struct wl_resource* resource;
+  struct xdg_shell* proxy;
+};
+
+static void sl_bind_host_xdg_shell(struct wl_client* client,
+                                   void* data,
+				   uint32_t version,
+				   uint32_t id) {
+  struct sl_context* ctx = (struct sl_context*)data;
+  struct sl_host_xdg_shell* host;
+
+  host = malloc(sizeof(*host));
+  assert(host);
+  host->ctx = ctx;
+  host->resource = wl_resource_create(client, &xdg_shell_interface,
+                                      ctx->xdg_shell->id, id);
+  wl_resource_set_implementation(host->resource, &sl_xdg_shell_implementation,
+		                 host, sl_destroy_host_xdg_shell);
+  host->proxy =
+      wl_registry_bind(wl_display_get_registry(ctx->display),
+                       ctx->xdg_shell->id, &xdg_shell_interface,
+		       ctx->xdg_shell->version);
+  xdg_shell_set_user_data(host->proxy, host);
+  xdg_shell_add_listener(host->proxy, &sl_xdg_shell_listener, host);
+}
+
+struct sl_global* sl_xdg_shell_create(struct sl_context* ctx) {
+  return sl_global_create(ctx, &xdg_shell_interface,
+                          ctx->xdg_shell->version, ctx,
+                          sl_bind_host_xdg_shell);
+}

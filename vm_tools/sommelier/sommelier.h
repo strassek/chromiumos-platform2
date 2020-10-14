@@ -43,6 +43,7 @@ struct sl_pointer_constraints;
 struct sl_window;
 struct zaura_shell;
 struct zcr_keyboard_extension_v1;
+struct sl_xdg_shell;
 
 enum {
   ATOM_WM_S0,
@@ -107,6 +108,7 @@ struct sl_context {
   struct sl_text_input_manager* text_input_manager;
   struct sl_relative_pointer_manager* relative_pointer_manager;
   struct sl_pointer_constraints* pointer_constraints;
+  struct sl_xdg_shell* xdg_shell;
   struct wl_list outputs;
   struct wl_list seats;
   struct wl_event_source* display_event_source;
@@ -385,6 +387,14 @@ struct sl_xdg_wm_base {
   struct xdg_wm_base* internal;
 };
 
+struct sl_xdg_shell {
+  struct sl_context* ctx;
+  uint32_t id;
+  uint32_t version;
+  struct sl_global* host_global;
+  struct xdg_shell* internal;
+};
+
 struct sl_aura_shell {
   struct sl_context* ctx;
   uint32_t id;
@@ -537,6 +547,8 @@ struct sl_global* sl_drm_global_create(struct sl_context* ctx);
 struct sl_global* sl_text_input_manager_global_create(struct sl_context* ctx);
 
 struct sl_global* sl_pointer_constraints_global_create(struct sl_context* ctx);
+
+struct sl_global* sl_xdg_shell_global_create(struct sl_context* ctx);
 
 void sl_set_display_implementation(struct sl_context* ctx);
 
